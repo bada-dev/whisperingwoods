@@ -747,17 +747,34 @@ async function postUpdate() {
   const title = document.getElementById('u-title').value.trim();
   const body = document.getElementById('u-body').value.trim();
   if (!title || !body) { alert('Title and description required.'); return; }
-  await fetch('/api/updates', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPw },
-    body: JSON.stringify({ title, body, images: [...pastedImgs] })
-  });
-  document.getElementById('u-title').value = '';
-  document.getElementById('u-body').value = '';
-  pastedImgs = [];
-  renderPasteZone();
-  loadUpdates();
-  loadPostList();
+  const btn = document.querySelector('.btn-post');
+  btn.textContent = 'Posting...';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/updates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPw },
+      body: JSON.stringify({ title, body, images: [...pastedImgs] })
+    });
+    if (res.ok) {
+      document.getElementById('u-title').value = '';
+      document.getElementById('u-body').value = '';
+      pastedImgs = [];
+      renderPasteZone();
+      loadUpdates();
+      loadPostList();
+      btn.textContent = '✓ Posted!';
+      setTimeout(() => { btn.textContent = 'Post Update'; btn.disabled = false; }, 2000);
+    } else {
+      alert('Failed to post. Check your connection.');
+      btn.textContent = 'Post Update';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+    btn.textContent = 'Post Update';
+    btn.disabled = false;
+  }
 }
 
 // Paste images
