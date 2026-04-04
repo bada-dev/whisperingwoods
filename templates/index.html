@@ -751,11 +751,13 @@ async function postUpdate() {
   btn.textContent = 'Posting...';
   btn.disabled = true;
   try {
+    console.log('adminPw is:', adminPw);
     const res = await fetch('/api/updates', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPw },
       body: JSON.stringify({ title, body, images: [...pastedImgs] })
     });
+    console.log('Response status:', res.status);
     if (res.ok) {
       document.getElementById('u-title').value = '';
       document.getElementById('u-body').value = '';
