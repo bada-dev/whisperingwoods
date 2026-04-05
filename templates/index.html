@@ -704,19 +704,19 @@ function renderUpdates(updates) {
 
 // Admin
 function openAdmin() {
-  document.getElementById('admin-modal').classList.add('open');
-  if (loggedIn) showPanel();
-}
-function closeAdmin() { document.getElementById('admin-modal').classList.remove('open'); }
-
-function tryLogin() {
-  const val = document.getElementById('pw-input').value;
-  fetch('/api/updates', { headers: { 'X-Admin-Password': val } })
+  if (loggedIn) { document.getElementById('admin-modal').classList.add('open'); showPanel(); return; }
+  const val = prompt('Enter admin password:');
+  if (!val) return;
+  fetch('/api/login', { method: 'POST', headers: { 'X-Admin-Password': val } })
     .then(r => {
-      if (r.ok) { adminPw = val; loggedIn = true; document.getElementById('pw-err').style.display='none'; showPanel(); }
-      else { document.getElementById('pw-err').style.display='block'; }
+      if (r.ok) { adminPw = val; loggedIn = true; document.getElementById('admin-modal').classList.add('open'); showPanel(); }
+      else { alert('Wrong password.'); }
     });
 }
+
+function closeAdmin() { document.getElementById('admin-modal').classList.remove('open'); }
+
+function tryLogin() {}
 
 function showPanel() {
   document.getElementById('pw-panel').style.display = 'none';
