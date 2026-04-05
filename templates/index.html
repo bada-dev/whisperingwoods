@@ -18,7 +18,7 @@
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: auto; } /* we handle scroll manually */
+html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
@@ -659,26 +659,7 @@ document.addEventListener('mousemove', e => {
 const scroller = document.getElementById('scroll-container');
 let currentY = 0, targetY = 0;
 
-scroller.addEventListener('wheel', e => {
-  e.preventDefault();
-  targetY += e.deltaY * 0.8;
-  targetY = Math.max(0, Math.min(targetY, scroller.scrollHeight - scroller.clientHeight));
-}, { passive: false });
-
-function smoothScroll() {
-  currentY += (targetY - currentY) * 0.08;
-  scroller.scrollTop = currentY;
-  requestAnimationFrame(smoothScroll);
-}
-smoothScroll();
-
-// sync targetY if user uses scrollbar directly
-scroller.addEventListener('scroll', () => {
-  if (Math.abs(scroller.scrollTop - currentY) > 5) {
-    currentY = scroller.scrollTop;
-    targetY = scroller.scrollTop;
-  }
-});
+// smooth scroll via CSS only
 
 // ── MARKDOWN PARSER ──
 function parseMarkdown(text) {
