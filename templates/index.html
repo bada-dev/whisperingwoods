@@ -7,29 +7,58 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #04070a;
-  --surface: rgba(8,14,10,0.85);
-  --border: rgba(60,100,60,0.18);
+  --bg: #03060a;
+  --surface: rgba(6,12,8,0.88);
+  --border: rgba(60,110,60,0.2);
   --green: #3a7a3a;
   --green-light: #5aaa5a;
   --green-glow: #7fff7f;
   --text: #c5d8c0;
   --muted: #5a7a5a;
-  --fog: rgba(20,40,20,0.6);
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-html { scroll-behavior: smooth; }
-
+html { scroll-behavior: auto; } /* we handle scroll manually */
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'EB Garamond', serif;
   min-height: 100vh;
   overflow-x: hidden;
-  cursor: crosshair;
+  cursor: none;
 }
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  width: 28px; height: 28px;
+  border: 1px solid rgba(127,255,100,0.6);
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  transition: width 0.15s, height 0.15s, border-color 0.15s;
+}
+#cursor-dot {
+  width: 4px; height: 4px;
+  background: rgba(127,255,100,0.9);
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  box-shadow: 0 0 6px rgba(127,255,100,0.8);
+}
+#cursor-cross-h, #cursor-cross-v {
+  position: absolute;
+  background: rgba(127,255,100,0.25);
+  transform: translate(-50%,-50%);
+}
+#cursor-cross-h { width: 14px; height: 1px; }
+#cursor-cross-v { width: 1px; height: 14px; }
+body:hover #cursor-ring { border-color: rgba(127,255,100,0.8); }
 
 /* ── BACKGROUND ── */
 .bg-scene {
@@ -38,254 +67,214 @@ body {
   z-index: 0;
   overflow: hidden;
 }
-
-/* Deep gradient sky */
 .bg-scene::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, #0a1a08 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 20% 30%, #061209 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 20%, #070e05 0%, transparent 60%),
-    linear-gradient(180deg, #030805 0%, #050f07 40%, #030608 100%);
+    radial-gradient(ellipse 90% 55% at 50% 0%, #0d2210 0%, transparent 65%),
+    radial-gradient(ellipse 50% 35% at 15% 25%, #071509 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 85% 20%, #081609 0%, transparent 55%),
+    linear-gradient(180deg, #020605 0%, #040e06 45%, #020508 100%);
 }
 
-/* Moon */
+/* Moon - brighter, radiating */
 .moon {
   position: absolute;
-  top: 8%;
+  top: 7%;
   left: 50%;
   transform: translateX(-50%);
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #e8f5e0, #b8d8a0 40%, #7aaa60 80%);
-  box-shadow:
-    0 0 30px rgba(180,255,150,0.3),
-    0 0 80px rgba(100,200,80,0.15),
-    0 0 200px rgba(60,150,40,0.08);
-  animation: moonPulse 6s ease-in-out infinite;
+  width: 100px;
+  height: 100px;
 }
-@keyframes moonPulse {
-  0%,100% { box-shadow: 0 0 30px rgba(180,255,150,0.3), 0 0 80px rgba(100,200,80,0.15), 0 0 200px rgba(60,150,40,0.08); }
-  50% { box-shadow: 0 0 50px rgba(180,255,150,0.45), 0 0 120px rgba(100,200,80,0.25), 0 0 300px rgba(60,150,40,0.12); }
+.moon-core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #ffffff 0%, #d8f0c0 30%, #a0d080 65%, #70aa50 100%);
+  box-shadow:
+    0 0 20px rgba(220,255,180,0.9),
+    0 0 50px rgba(180,255,130,0.6),
+    0 0 100px rgba(120,220,80,0.35),
+    0 0 200px rgba(80,180,40,0.2);
+  animation: moonCore 5s ease-in-out infinite;
+}
+.moon-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(180,255,130,0.15);
+  animation: moonRing 5s ease-in-out infinite;
+}
+.moon-ring:nth-child(2) { inset: -15px; animation-delay: 0s; }
+.moon-ring:nth-child(3) { inset: -30px; border-color: rgba(150,230,100,0.08); animation-delay: 0.5s; }
+.moon-ring:nth-child(4) { inset: -50px; border-color: rgba(120,200,70,0.04); animation-delay: 1s; }
+@keyframes moonCore {
+  0%,100% { box-shadow: 0 0 20px rgba(220,255,180,0.9), 0 0 50px rgba(180,255,130,0.6), 0 0 100px rgba(120,220,80,0.35), 0 0 200px rgba(80,180,40,0.2); }
+  50% { box-shadow: 0 0 30px rgba(240,255,200,1), 0 0 80px rgba(200,255,150,0.8), 0 0 160px rgba(140,240,90,0.5), 0 0 320px rgba(90,200,50,0.3); }
+}
+@keyframes moonRing {
+  0%,100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
 }
 
 /* Stars */
 .stars {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background-image:
-    radial-gradient(1px 1px at 10% 8%, rgba(200,255,180,0.8) 0%, transparent 100%),
-    radial-gradient(1px 1px at 25% 15%, rgba(200,255,180,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 40% 5%, rgba(200,255,180,0.7) 0%, transparent 100%),
-    radial-gradient(1px 1px at 60% 12%, rgba(200,255,180,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 75% 7%, rgba(200,255,180,0.8) 0%, transparent 100%),
-    radial-gradient(1px 1px at 88% 20%, rgba(200,255,180,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 15% 25%, rgba(200,255,180,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 33% 18%, rgba(200,255,180,0.7) 0%, transparent 100%),
-    radial-gradient(1px 1px at 55% 22%, rgba(200,255,180,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 70% 28%, rgba(200,255,180,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 92% 10%, rgba(200,255,180,0.4) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 5% 18%, rgba(200,255,180,0.9) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 80% 14%, rgba(200,255,180,0.7) 0%, transparent 100%),
-    radial-gradient(1px 1px at 47% 30%, rgba(200,255,180,0.5) 0%, transparent 100%);
-  animation: starsTwinkle 4s ease-in-out infinite alternate;
+    radial-gradient(1.5px 1.5px at 8% 6%, rgba(220,255,190,0.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 12%, rgba(200,255,170,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 38% 4%, rgba(220,255,190,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 58% 9%, rgba(200,255,170,0.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 73% 5%, rgba(220,255,190,0.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 87% 18%, rgba(200,255,170,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 13% 22%, rgba(200,255,170,0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 31% 16%, rgba(220,255,190,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 53% 20%, rgba(200,255,170,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 68% 26%, rgba(200,255,170,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 91% 8%, rgba(200,255,170,0.5) 0%, transparent 100%),
+    radial-gradient(2px 2px at 4% 15%, rgba(220,255,190,1) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 79% 11%, rgba(220,255,190,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 28%, rgba(200,255,170,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 95% 23%, rgba(200,255,170,0.5) 0%, transparent 100%);
+  animation: twinkle 3s ease-in-out infinite alternate;
 }
-@keyframes starsTwinkle {
-  from { opacity: 0.7; }
-  to { opacity: 1; }
-}
+@keyframes twinkle { from { opacity: 0.65; } to { opacity: 1; } }
 
-/* SVG Trees */
+/* Trees - more visible */
 .trees {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 55%;
+  bottom: 0; left: 0; right: 0;
+  height: 62%;
 }
 
-/* Fog layers */
+/* Fog */
 .fog {
-  position: absolute;
-  bottom: 0;
-  left: -100%;
-  width: 300%;
-  height: 200px;
-  background: linear-gradient(180deg, transparent 0%, rgba(15,35,15,0.4) 40%, rgba(20,45,20,0.7) 100%);
+  position: absolute; bottom: 0;
+  left: -100%; width: 300%; height: 220px;
+  background: linear-gradient(180deg, transparent 0%, rgba(15,40,15,0.45) 40%, rgba(20,55,20,0.75) 100%);
   border-radius: 50% 50% 0 0 / 30% 30% 0 0;
-  animation: fogDrift 20s ease-in-out infinite alternate;
+  animation: fogA 22s ease-in-out infinite alternate;
 }
 .fog2 {
-  position: absolute;
-  bottom: 0;
-  left: -80%;
-  width: 260%;
-  height: 140px;
-  background: linear-gradient(180deg, transparent 0%, rgba(10,30,10,0.5) 60%, rgba(15,40,15,0.8) 100%);
+  position: absolute; bottom: 0;
+  left: -80%; width: 260%; height: 150px;
+  background: linear-gradient(180deg, transparent 0%, rgba(10,35,10,0.55) 55%, rgba(15,50,15,0.85) 100%);
   border-radius: 40% 60% 0 0 / 20% 20% 0 0;
-  animation: fogDrift2 25s ease-in-out infinite alternate;
+  animation: fogB 28s ease-in-out infinite alternate;
 }
-@keyframes fogDrift { from { transform: translateX(0); } to { transform: translateX(8%); } }
-@keyframes fogDrift2 { from { transform: translateX(0); } to { transform: translateX(-6%); } }
+@keyframes fogA { from { transform: translateX(0); } to { transform: translateX(9%); } }
+@keyframes fogB { from { transform: translateX(0); } to { transform: translateX(-7%); } }
 
-/* Noise grain */
+/* Grain */
 .grain {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0.035;
+  position: fixed; inset: 0; z-index: 2;
+  pointer-events: none; opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-
-/* Vignette */
 .vignette {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.88) 100%);
+}
+
+/* ── SMOOTH SCROLL CONTAINER ── */
+#scroll-container {
   position: fixed;
   inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+  overflow-y: scroll;
+  z-index: 10;
+  scroll-behavior: auto;
 }
+#scroll-container::-webkit-scrollbar { width: 4px; }
+#scroll-container::-webkit-scrollbar-track { background: transparent; }
+#scroll-container::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }
 
 /* ── CONTENT ── */
-.content {
-  position: relative;
-  z-index: 10;
-}
+.content { position: relative; z-index: 10; will-change: transform; }
 
 /* ── HERO ── */
 .hero {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px 20px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 40px 20px;
 }
-
 .game-label {
-  font-size: 0.7rem;
-  letter-spacing: 0.5em;
-  color: var(--muted);
-  text-transform: uppercase;
+  font-size: 0.7rem; letter-spacing: 0.5em;
+  color: var(--muted); text-transform: uppercase;
   margin-bottom: 20px;
-  animation: fadeUp 1.2s ease 0.3s both;
+  animation: fadeUp 1.4s ease 0.3s both;
 }
-
 .game-title {
   font-family: 'Cinzel Decorative', serif;
   font-size: clamp(2.8rem, 8vw, 6rem);
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.1;
-  animation: fadeUp 1.2s ease 0.5s both;
-  position: relative;
-  text-shadow:
-    0 0 20px rgba(127,255,100,0.6),
-    0 0 60px rgba(80,200,60,0.35),
-    0 0 120px rgba(50,150,30,0.2),
-    0 0 250px rgba(30,100,15,0.1);
-  animation: fadeUp 1.2s ease 0.5s both, titleGlow 3s ease-in-out infinite;
+  font-weight: 900; color: #fff; line-height: 1.1;
+  animation: fadeUp 1.4s ease 0.5s both, titleGlow 4s ease-in-out infinite;
 }
-
 @keyframes titleGlow {
-  0%,100% {
-    text-shadow:
-      0 0 20px rgba(127,255,100,0.6),
-      0 0 60px rgba(80,200,60,0.35),
-      0 0 120px rgba(50,150,30,0.2);
-  }
-  50% {
-    text-shadow:
-      0 0 30px rgba(127,255,127,0.9),
-      0 0 90px rgba(80,220,60,0.55),
-      0 0 180px rgba(50,170,30,0.35),
-      0 0 350px rgba(30,120,15,0.2);
-  }
+  0%,100% { text-shadow: 0 0 20px rgba(127,255,100,0.7), 0 0 60px rgba(80,200,60,0.4), 0 0 130px rgba(50,160,30,0.2); }
+  50% { text-shadow: 0 0 35px rgba(150,255,120,1), 0 0 100px rgba(100,230,70,0.65), 0 0 200px rgba(60,190,35,0.4), 0 0 400px rgba(30,130,15,0.2); }
 }
-
 .game-divider {
-  width: 180px;
-  height: 1px;
+  width: 180px; height: 1px;
   background: linear-gradient(90deg, transparent, var(--green-light), transparent);
   margin: 28px auto;
-  animation: fadeUp 1.2s ease 0.7s both;
+  animation: fadeUp 1.4s ease 0.7s both;
 }
-
 .game-desc {
-  max-width: 560px;
-  font-size: 1.15rem;
-  line-height: 1.9;
-  color: #8aaa85;
-  font-style: italic;
-  animation: fadeUp 1.2s ease 0.9s both;
+  max-width: 560px; font-size: 1.15rem;
+  line-height: 1.9; color: #8aaa85; font-style: italic;
+  animation: fadeUp 1.4s ease 0.9s both;
 }
-
 .hero-scroll {
-  margin-top: 60px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  animation: fadeUp 1.2s ease 1.2s both;
-  color: var(--muted);
-  font-size: 0.7rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
+  margin-top: 60px; display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  animation: fadeUp 1.4s ease 1.2s both;
+  color: var(--muted); font-size: 0.7rem;
+  letter-spacing: 0.3em; text-transform: uppercase;
 }
 .scroll-line {
-  width: 1px;
-  height: 50px;
+  width: 1px; height: 50px;
   background: linear-gradient(180deg, var(--green), transparent);
   animation: scrollPulse 2s ease-in-out infinite;
 }
-@keyframes scrollPulse {
-  0%,100% { opacity: 0.4; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(1.1); }
-}
+@keyframes scrollPulse { 0%,100% { opacity: 0.3; transform: scaleY(1); } 50% { opacity: 1; transform: scaleY(1.15); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ── UPDATES SECTION ── */
+/* ── UPDATES ── */
 .updates-section {
-  background: linear-gradient(180deg, transparent 0%, rgba(4,10,6,0.97) 120px);
-  padding: 80px 20px 120px;
+  background: linear-gradient(180deg, transparent 0%, rgba(3,8,5,0.98) 100px);
+  padding: 80px 20px 140px;
   min-height: 60vh;
 }
-
-.section-header {
-  text-align: center;
-  margin-bottom: 60px;
-}
+.section-header { text-align: center; margin-bottom: 60px; }
 .section-tag {
-  font-size: 0.65rem;
-  letter-spacing: 0.5em;
-  color: var(--muted);
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 12px;
+  font-size: 0.65rem; letter-spacing: 0.5em;
+  color: var(--muted); text-transform: uppercase;
+  display: block; margin-bottom: 12px;
 }
 .section-title {
   font-family: 'Cinzel Decorative', serif;
-  font-size: 1.6rem;
-  color: var(--green-glow);
-  text-shadow: 0 0 30px rgba(127,255,100,0.3);
+  font-size: 1.6rem; color: var(--green-glow);
+  text-shadow: 0 0 30px rgba(127,255,100,0.35);
 }
 
 .updates-grid {
-  max-width: 820px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  max-width: 840px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 0;
 }
+
+/* Day divider */
+.day-divider {
+  display: flex; align-items: center;
+  gap: 18px; margin: 48px 0 32px;
+  font-size: 0.65rem; letter-spacing: 0.4em;
+  color: var(--muted); text-transform: uppercase;
+}
+.day-divider::before, .day-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border));
+}
+.day-divider::after { background: linear-gradient(90deg, var(--border), transparent); }
 
 .update-card {
   background: var(--surface);
@@ -294,292 +283,260 @@ body {
   padding: 32px 36px;
   position: relative;
   backdrop-filter: blur(8px);
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, transform 0.3s;
+  margin-bottom: 2px;
 }
-.update-card:hover { border-color: rgba(90,170,90,0.35); border-left-color: var(--green-light); }
+.update-card:hover { border-color: rgba(90,170,90,0.4); border-left-color: var(--green-light); transform: translateX(3px); }
 
 .update-meta {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 12px;
+  display: flex; align-items: center;
+  gap: 14px; margin-bottom: 12px;
 }
-.update-date {
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
-  color: var(--green-light);
-  text-transform: uppercase;
-}
+.update-date { font-size: 0.7rem; letter-spacing: 0.25em; color: var(--green-light); text-transform: uppercase; }
 .update-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
 .update-number { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
 
 .update-title {
   font-family: 'Cinzel Decorative', serif;
-  font-size: 1rem;
-  color: #ddeedd;
-  margin-bottom: 14px;
-  letter-spacing: 0.03em;
+  font-size: 1rem; color: #ddeedd;
+  margin-bottom: 14px; letter-spacing: 0.03em;
 }
-.update-body {
-  font-size: 1.05rem;
-  line-height: 1.85;
-  color: #7a9a7a;
-}
+.update-body { font-size: 1.05rem; line-height: 1.85; color: #7a9a7a; }
 
+/* Markdown rendered styles */
+.update-body h1 { font-family: 'Cinzel Decorative', serif; font-size: 1.4rem; color: #ddeedd; margin: 16px 0 8px; }
+.update-body h2 { font-family: 'Cinzel Decorative', serif; font-size: 1.15rem; color: #c8d8c0; margin: 14px 0 6px; }
+.update-body h3 { font-family: 'Cinzel Decorative', serif; font-size: 0.95rem; color: #aabcaa; margin: 12px 0 5px; letter-spacing: 0.05em; }
+.update-body strong { color: #c5d8c0; font-weight: 600; }
+.update-body u { text-decoration: underline; text-decoration-color: var(--green); }
+.update-body code { background: rgba(40,70,40,0.5); padding: 1px 6px; border-radius: 2px; font-family: monospace; font-size: 0.9em; color: var(--green-glow); border: 1px solid var(--border); }
+.update-body hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.update-body blockquote { border-left: 2px solid var(--green); padding-left: 14px; color: var(--muted); font-style: italic; margin: 10px 0; }
+.update-body p { margin-bottom: 8px; }
+
+/* Images */
 .update-images {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 8px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px; margin: 16px 0;
 }
 .update-images img {
-  width: 100%;
-  aspect-ratio: 16/9;
-  object-fit: cover;
+  width: 100%; aspect-ratio: 16/9; object-fit: cover;
   border: 1px solid var(--border);
-  filter: brightness(0.85) saturate(0.8);
+  filter: brightness(0.82) saturate(0.75);
   transition: filter 0.3s, border-color 0.3s;
   cursor: zoom-in;
 }
-.update-images img:hover { filter: brightness(1) saturate(1); border-color: var(--green); }
+.update-images img:hover { filter: brightness(1) saturate(1); border-color: var(--green-light); }
 
 .empty-state {
-  text-align: center;
-  padding: 80px 20px;
-  color: var(--muted);
-  font-style: italic;
-  font-size: 1.1rem;
-  border: 1px dashed var(--border);
+  text-align: center; padding: 80px 20px;
+  color: var(--muted); font-style: italic;
+  font-size: 1.1rem; border: 1px dashed var(--border);
 }
 
 /* ── FOOTER ── */
 footer {
-  text-align: center;
-  padding: 40px 20px;
+  text-align: center; padding: 40px 20px;
   border-top: 1px solid var(--border);
-  position: relative;
-  z-index: 10;
 }
-.footer-credit {
-  font-size: 0.75rem;
-  letter-spacing: 0.3em;
-  color: var(--muted);
-  text-transform: uppercase;
-}
+.footer-credit { font-size: 0.75rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; }
 .footer-credit span { color: var(--green-light); }
 
 /* ── LIGHTBOX ── */
 #lightbox {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.95);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  cursor: zoom-out;
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.96); z-index: 99990;
+  align-items: center; justify-content: center; cursor: zoom-out;
 }
 #lightbox.open { display: flex; }
 #lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
 
-/* ── ADMIN ── */
+/* ── ADMIN BUTTON ── */
 #admin-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: 'EB Garamond', serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  padding: 7px 13px;
-  cursor: pointer;
-  z-index: 500;
-  transition: all 0.2s;
+  position: fixed; bottom: 20px; right: 20px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); font-family: 'EB Garamond', serif;
+  font-size: 0.7rem; letter-spacing: 0.25em;
+  text-transform: uppercase; padding: 7px 13px;
+  cursor: none; z-index: 500; transition: all 0.2s;
 }
 #admin-btn:hover { border-color: var(--green); color: var(--green-glow); }
 
+/* ── ADMIN MODAL ── */
 #admin-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  z-index: 5000;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92); z-index: 8000;
+  align-items: center; justify-content: center; padding: 20px;
 }
 #admin-modal.open { display: flex; }
-
 .admin-box {
-  background: #060e08;
-  border: 1px solid var(--border);
-  width: 100%;
-  max-width: 580px;
-  max-height: 88vh;
-  overflow-y: auto;
-  padding: 36px;
-  position: relative;
+  background: #050d07; border: 1px solid var(--border);
+  width: 100%; max-width: 640px; max-height: 90vh;
+  overflow-y: auto; padding: 36px; position: relative;
 }
-.admin-box::-webkit-scrollbar { width: 4px; }
-.admin-box::-webkit-scrollbar-track { background: transparent; }
-.admin-box::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }
+.admin-box::-webkit-scrollbar { width: 3px; }
+.admin-box::-webkit-scrollbar-thumb { background: var(--green); }
 
 .admin-title {
   font-family: 'Cinzel Decorative', serif;
-  font-size: 0.9rem;
-  color: var(--green-glow);
-  margin-bottom: 24px;
-  letter-spacing: 0.08em;
+  font-size: 0.9rem; color: var(--green-glow);
+  margin-bottom: 24px; letter-spacing: 0.08em;
 }
 .admin-x {
-  position: absolute;
-  top: 14px; right: 16px;
-  background: none; border: none;
-  color: var(--muted); font-size: 1.1rem;
-  cursor: pointer; line-height: 1;
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none; color: var(--muted);
+  font-size: 1.1rem; cursor: none; line-height: 1;
 }
 .admin-x:hover { color: var(--text); }
 
 .field-label {
-  display: block;
-  font-size: 0.65rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 16px 0 6px;
+  display: block; font-size: 0.65rem;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--muted); margin: 16px 0 6px;
 }
-input[type=text], input[type=password], textarea {
-  width: 100%;
-  background: #030a04;
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'EB Garamond', serif;
-  font-size: 1rem;
-  padding: 9px 12px;
-  outline: none;
+
+/* Formatting toolbar */
+.fmt-toolbar {
+  display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px;
+}
+.fmt-btn {
+  background: rgba(30,60,30,0.4); border: 1px solid var(--border);
+  color: var(--text); font-size: 0.78rem; padding: 3px 8px;
+  cursor: none; font-family: monospace;
+  transition: background 0.15s, border-color 0.15s;
+}
+.fmt-btn:hover { background: rgba(60,120,60,0.5); border-color: var(--green); }
+
+input[type=text], textarea, select {
+  width: 100%; background: #030a04;
+  border: 1px solid var(--border); color: var(--text);
+  font-family: 'EB Garamond', serif; font-size: 1rem;
+  padding: 9px 12px; outline: none;
   transition: border-color 0.2s;
 }
-input:focus, textarea:focus { border-color: var(--green); }
-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+input:focus, textarea:focus, select:focus { border-color: var(--green); }
+textarea { resize: vertical; min-height: 120px; line-height: 1.6; font-family: monospace; font-size: 0.9rem; }
+select { cursor: none; }
+option { background: #050d07; }
 
 .paste-zone {
-  width: 100%;
-  min-height: 70px;
-  background: #030a04;
-  border: 1px dashed var(--border);
-  margin-top: 6px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  color: var(--muted);
-  font-size: 0.85rem;
-  cursor: text;
-  transition: border-color 0.2s;
-  outline: none;
+  width: 100%; min-height: 70px;
+  background: #030a04; border: 1px dashed var(--border);
+  margin-top: 6px; display: flex; flex-wrap: wrap;
+  gap: 8px; align-items: center; justify-content: center;
+  padding: 10px; color: var(--muted); font-size: 0.85rem;
+  cursor: text; transition: border-color 0.2s; outline: none;
 }
 .paste-zone:focus { border-color: var(--green); }
 .paste-zone img { height: 55px; width: auto; object-fit: cover; border: 1px solid var(--border); }
 
+/* Preview */
+.preview-box {
+  background: #030a04; border: 1px solid var(--border);
+  padding: 14px 16px; margin-top: 10px;
+  min-height: 60px; font-size: 1rem; line-height: 1.8;
+  color: #7a9a7a; display: none;
+}
+.preview-box.visible { display: block; }
+
 .btn-post {
-  width: 100%;
-  margin-top: 18px;
-  padding: 11px;
-  background: var(--green);
-  border: none;
-  color: #e0f0e0;
-  font-family: 'EB Garamond', serif;
-  font-size: 1rem;
-  letter-spacing: 0.15em;
-  cursor: pointer;
-  transition: background 0.2s;
+  width: 100%; margin-top: 18px; padding: 11px;
+  background: var(--green); border: none; color: #e0f0e0;
+  font-family: 'EB Garamond', serif; font-size: 1rem;
+  letter-spacing: 0.15em; cursor: none; transition: background 0.2s;
   text-transform: uppercase;
 }
 .btn-post:hover { background: var(--green-light); }
 
 .admin-sep { height: 1px; background: var(--border); margin: 28px 0 18px; }
-
 .post-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.9rem;
+  display: flex; justify-content: space-between;
+  align-items: center; padding: 9px 0;
+  border-bottom: 1px solid var(--border); font-size: 0.9rem;
 }
 .post-item button {
-  background: none; border: none;
-  color: #7a2020; cursor: pointer;
-  font-size: 0.75rem; letter-spacing: 0.1em;
+  background: none; border: none; color: #7a2020;
+  cursor: none; font-size: 0.75rem; letter-spacing: 0.1em;
 }
 .post-item button:hover { color: #cc4040; }
 
-.err { color: #cc5050; font-size: 0.8rem; margin-top: 6px; display: none; }
-#pw-panel, #main-panel { width: 100%; }
-#main-panel { display: none; }
+#main-panel { display: none; width: 100%; }
+
+/* Two-col layout for image position */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 </style>
 </head>
 <body>
 
+<!-- Custom cursor -->
+<div id="cursor">
+  <div id="cursor-ring"></div>
+  <div id="cursor-dot"></div>
+  <div id="cursor-cross-h"></div>
+  <div id="cursor-cross-v"></div>
+</div>
+
 <!-- Background -->
 <div class="bg-scene">
   <div class="stars"></div>
-  <div class="moon"></div>
-  <svg class="trees" viewBox="0 0 1440 500" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-    <!-- Back trees - lighter -->
-    <g fill="#0a1a0a" opacity="0.7">
-      <polygon points="200,500 240,350 280,500"/>
-      <polygon points="220,500 260,300 300,500"/>
-      <polygon points="350,500 390,370 430,500"/>
-      <polygon points="600,500 640,330 680,500"/>
-      <polygon points="750,500 790,360 830,500"/>
-      <polygon points="900,500 940,310 980,500"/>
-      <polygon points="1100,500 1150,340 1200,500"/>
-      <polygon points="1250,500 1290,380 1330,500"/>
+  <div class="moon">
+    <div class="moon-core"></div>
+    <div class="moon-ring"></div>
+    <div class="moon-ring"></div>
+    <div class="moon-ring"></div>
+  </div>
+  <svg class="trees" viewBox="0 0 1440 560" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+    <!-- Distant trees - visible pale green -->
+    <g fill="#0e2a0e" opacity="0.9">
+      <polygon points="180,560 225,390 270,560"/>
+      <polygon points="210,560 255,340 300,560"/>
+      <polygon points="370,560 415,405 460,560"/>
+      <polygon points="560,560 610,370 660,560"/>
+      <polygon points="620,560 665,320 710,560"/>
+      <polygon points="780,560 830,380 880,560"/>
+      <polygon points="940,560 990,350 1040,560"/>
+      <polygon points="1120,560 1170,390 1220,560"/>
+      <polygon points="1270,560 1315,410 1360,560"/>
     </g>
     <!-- Mid trees -->
-    <g fill="#071207" opacity="0.85">
-      <polygon points="0,500 50,280 100,500"/>
-      <polygon points="60,500 120,240 180,500"/>
-      <polygon points="150,500 200,310 250,500"/>
-      <polygon points="300,500 370,200 440,500"/>
-      <polygon points="420,500 470,270 520,500"/>
-      <polygon points="520,500 580,230 640,500"/>
-      <polygon points="680,500 740,260 800,500"/>
-      <polygon points="820,500 880,190 940,500"/>
-      <polygon points="960,500 1020,250 1080,500"/>
-      <polygon points="1080,500 1130,220 1180,500"/>
-      <polygon points="1180,500 1250,270 1320,500"/>
-      <polygon points="1300,500 1370,240 1440,500"/>
-      <polygon points="1380,500 1440,280 1440,500"/>
+    <g fill="#091a09" opacity="0.95">
+      <polygon points="0,560 55,310 110,560"/>
+      <polygon points="70,560 135,270 200,560"/>
+      <polygon points="160,560 215,340 270,560"/>
+      <polygon points="290,560 365,230 440,560"/>
+      <polygon points="430,560 490,295 550,560"/>
+      <polygon points="530,560 595,260 660,560"/>
+      <polygon points="680,560 748,280 816,560"/>
+      <polygon points="840,560 910,215 980,560"/>
+      <polygon points="970,560 1040,270 1110,560"/>
+      <polygon points="1090,560 1148,245 1206,560"/>
+      <polygon points="1195,560 1268,295 1341,560"/>
+      <polygon points="1310,560 1385,265 1440,560"/>
+      <polygon points="1395,560 1440,305 1440,560"/>
     </g>
-    <!-- Front trees - darkest -->
-    <g fill="#040a04">
-      <polygon points="-20,500 60,210 140,500"/>
-      <polygon points="100,500 180,160 260,500"/>
-      <polygon points="280,500 360,190 440,500"/>
-      <polygon points="480,500 550,180 620,500"/>
-      <polygon points="700,500 790,150 880,500"/>
-      <polygon points="900,500 975,175 1050,500"/>
-      <polygon points="1080,500 1165,160 1250,500"/>
-      <polygon points="1300,500 1380,185 1440,500"/>
+    <!-- Front trees - near black with slight green -->
+    <g fill="#040c04">
+      <polygon points="-20,560 68,225 156,560"/>
+      <polygon points="90,560 182,175 274,560"/>
+      <polygon points="270,560 365,205 460,560"/>
+      <polygon points="460,560 542,195 624,560"/>
+      <polygon points="680,560 778,162 876,560"/>
+      <polygon points="890,560 972,188 1054,560"/>
+      <polygon points="1065,560 1158,172 1251,560"/>
+      <polygon points="1285,560 1372,198 1440,560"/>
       <!-- Trunks -->
-      <rect x="55" y="420" width="10" height="80"/>
-      <rect x="175" y="440" width="10" height="60"/>
-      <rect x="355" y="430" width="12" height="70"/>
-      <rect x="546" y="435" width="10" height="65"/>
-      <rect x="787" y="420" width="14" height="80"/>
-      <rect x="972" y="430" width="10" height="70"/>
-      <rect x="1162" y="420" width="12" height="80"/>
-      <rect x="1378" y="430" width="10" height="70"/>
+      <rect x="63" y="460" width="10" height="100" fill="#030a03"/>
+      <rect x="176" y="480" width="10" height="80" fill="#030a03"/>
+      <rect x="360" y="470" width="12" height="90" fill="#030a03"/>
+      <rect x="538" y="475" width="10" height="85" fill="#030a03"/>
+      <rect x="775" y="462" width="14" height="98" fill="#030a03"/>
+      <rect x="969" y="472" width="10" height="88" fill="#030a03"/>
+      <rect x="1155" y="460" width="12" height="100" fill="#030a03"/>
+      <rect x="1370" y="472" width="10" height="88" fill="#030a03"/>
     </g>
     <!-- Ground -->
-    <rect x="0" y="480" width="1440" height="20" fill="#040a04"/>
+    <rect x="0" y="542" width="1440" height="18" fill="#030804"/>
   </svg>
   <div class="fog"></div>
   <div class="fog2"></div>
@@ -588,38 +545,40 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 <div class="grain"></div>
 <div class="vignette"></div>
 
-<!-- Content -->
-<div class="content">
-  <!-- Hero -->
-  <section class="hero">
-    <div class="game-label">An Indie Horror Experience</div>
-    <h1 class="game-title">Whispering<br>Woods</h1>
-    <div class="game-divider"></div>
-    <p class="game-desc">
-      Alone in a forest that breathes. Something watches from the treeline —
-      never close enough to see clearly, always close enough to feel.
-      Survive the night. Learn the rules. Break none of them.
-    </p>
-    <div class="hero-scroll">
-      <div class="scroll-line"></div>
-      <span>Devlog</span>
-    </div>
-  </section>
+<!-- Smooth scroll container -->
+<div id="scroll-container">
+  <div class="content">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="game-label">An Indie Horror Experience</div>
+      <h1 class="game-title">Whispering<br>Woods</h1>
+      <div class="game-divider"></div>
+      <p class="game-desc">
+        Alone in a forest that breathes. Something watches from the treeline —
+        never close enough to see clearly, always close enough to feel.
+        Survive the night. Learn the rules. Break none of them.
+      </p>
+      <div class="hero-scroll">
+        <div class="scroll-line"></div>
+        <span>Devlog</span>
+      </div>
+    </section>
 
-  <!-- Updates -->
-  <section class="updates-section">
-    <div class="section-header">
-      <span class="section-tag">Development Log</span>
-      <div class="section-title">Latest Updates</div>
-    </div>
-    <div class="updates-grid" id="updates-grid">
-      <div class="empty-state">The forest is quiet. No updates yet.</div>
-    </div>
-  </section>
+    <!-- Updates -->
+    <section class="updates-section">
+      <div class="section-header">
+        <span class="section-tag">Development Log</span>
+        <div class="section-title">Latest Updates</div>
+      </div>
+      <div class="updates-grid" id="updates-grid">
+        <div class="empty-state">The forest is quiet. No updates yet.</div>
+      </div>
+    </section>
 
-  <footer>
-    <div class="footer-credit">Made by <span>Bada</span> &nbsp;·&nbsp; Whispering Woods &nbsp;·&nbsp; All rights reserved</div>
-  </footer>
+    <footer>
+      <div class="footer-credit">Made by <span>Bada</span> &nbsp;·&nbsp; Whispering Woods &nbsp;·&nbsp; All rights reserved</div>
+    </footer>
+  </div>
 </div>
 
 <!-- Lightbox -->
@@ -627,21 +586,12 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   <img id="lb-img" src="" alt="">
 </div>
 
-<!-- Admin button -->
+<!-- Admin -->
 <button id="admin-btn" onclick="openAdmin()">Admin</button>
 
-<!-- Admin modal -->
 <div id="admin-modal">
   <div class="admin-box">
     <button class="admin-x" onclick="closeAdmin()">✕</button>
-
-    <div id="pw-panel">
-      <div class="admin-title">Admin Access</div>
-      <label class="field-label">Password</label>
-      <input type="password" id="pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')tryLogin()">
-      <div class="err" id="pw-err">Incorrect password.</div>
-      <button class="btn-post" style="margin-top:12px;" onclick="tryLogin()">Enter</button>
-    </div>
 
     <div id="main-panel">
       <div class="admin-title">Post an Update</div>
@@ -649,15 +599,39 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
       <label class="field-label">Title</label>
       <input type="text" id="u-title" placeholder="e.g. Creature AI Implemented">
 
-      <label class="field-label">Description</label>
-      <textarea id="u-body" placeholder="What was added, changed, or fixed?"></textarea>
+      <label class="field-label">Description — Discord-style formatting</label>
+      <div class="fmt-toolbar">
+        <button class="fmt-btn" onclick="fmt('# ')">H1</button>
+        <button class="fmt-btn" onclick="fmt('## ')">H2</button>
+        <button class="fmt-btn" onclick="fmt('### ')">H3</button>
+        <button class="fmt-btn" onclick="fmtWrap('**','**')"><b>B</b></button>
+        <button class="fmt-btn" onclick="fmtWrap('__','__')"><u>U</u></button>
+        <button class="fmt-btn" onclick="fmtWrap('`','`')">` `</button>
+        <button class="fmt-btn" onclick="fmtWrap('> ','')">❝</button>
+        <button class="fmt-btn" onclick="fmt('--')">——</button>
+        <button class="fmt-btn" onclick="togglePreview()">👁 Preview</button>
+      </div>
+      <textarea id="u-body" placeholder="Write your update here..." oninput="updatePreview()"></textarea>
+      <div class="preview-box" id="preview-box"></div>
 
-      <label class="field-label">Images — Click then Ctrl+V to paste</label>
-      <div class="paste-zone" id="paste-zone" tabindex="0">
-        <span id="paste-hint">Click here, then Ctrl+V</span>
+      <div class="two-col">
+        <div>
+          <label class="field-label">Images — Click then Ctrl+V</label>
+          <div class="paste-zone" id="paste-zone" tabindex="0">
+            <span id="paste-hint">Ctrl+V to paste</span>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Image Position</label>
+          <select id="u-imgpos">
+            <option value="bottom">Bottom (default)</option>
+            <option value="top">Top</option>
+            <option value="middle">After first paragraph</option>
+          </select>
+        </div>
       </div>
 
-      <button class="btn-post" onclick="postUpdate()">Post Update</button>
+      <button class="btn-post" id="post-btn" onclick="postUpdate()">Post Update</button>
 
       <div class="admin-sep"></div>
       <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Manage Posts</div>
@@ -667,119 +641,102 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 </div>
 
 <script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+const dot = document.getElementById('cursor-dot');
+const crossH = document.getElementById('cursor-cross-h');
+const crossV = document.getElementById('cursor-cross-v');
+
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+// ── SMOOTH SCROLL ──
+const scroller = document.getElementById('scroll-container');
+let currentY = 0, targetY = 0;
+
+scroller.addEventListener('wheel', e => {
+  e.preventDefault();
+  targetY += e.deltaY * 0.8;
+  targetY = Math.max(0, Math.min(targetY, scroller.scrollHeight - scroller.clientHeight));
+}, { passive: false });
+
+function smoothScroll() {
+  currentY += (targetY - currentY) * 0.08;
+  scroller.scrollTop = currentY;
+  requestAnimationFrame(smoothScroll);
+}
+smoothScroll();
+
+// sync targetY if user uses scrollbar directly
+scroller.addEventListener('scroll', () => {
+  if (Math.abs(scroller.scrollTop - currentY) > 5) {
+    currentY = scroller.scrollTop;
+    targetY = scroller.scrollTop;
+  }
+});
+
+// ── MARKDOWN PARSER ──
+function parseMarkdown(text) {
+  if (!text) return '';
+  let lines = text.split('\n');
+  let html = '';
+  for (let line of lines) {
+    if (line.startsWith('### ')) { html += `<h3>${inline(line.slice(4))}</h3>`; continue; }
+    if (line.startsWith('## ')) { html += `<h2>${inline(line.slice(3))}</h2>`; continue; }
+    if (line.startsWith('# ')) { html += `<h1>${inline(line.slice(2))}</h1>`; continue; }
+    if (line.startsWith('> ')) { html += `<blockquote>${inline(line.slice(2))}</blockquote>`; continue; }
+    if (line.trim() === '--') { html += `<hr>`; continue; }
+    if (line.trim() === '') { html += `<br>`; continue; }
+    html += `<p>${inline(line)}</p>`;
+  }
+  return html;
+}
+
+function inline(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.*?)__/g, '<u>$1</u>')
+    .replace(/`(.*?)`/g, '<code>$1</code>');
+}
+
+// ── ADMIN FORMATTING TOOLS ──
+function fmt(prefix) {
+  const ta = document.getElementById('u-body');
+  const start = ta.selectionStart;
+  const lineStart = ta.value.lastIndexOf('\n', start - 1) + 1;
+  ta.value = ta.value.slice(0, lineStart) + prefix + ta.value.slice(lineStart);
+  ta.focus();
+  updatePreview();
+}
+
+function fmtWrap(before, after) {
+  const ta = document.getElementById('u-body');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.slice(s, e) || 'text';
+  ta.value = ta.value.slice(0, s) + before + sel + after + ta.value.slice(e);
+  ta.focus();
+  updatePreview();
+}
+
+let previewOn = false;
+function togglePreview() {
+  previewOn = !previewOn;
+  const box = document.getElementById('preview-box');
+  box.classList.toggle('visible', previewOn);
+  if (previewOn) updatePreview();
+}
+function updatePreview() {
+  if (!previewOn) return;
+  document.getElementById('preview-box').innerHTML = parseMarkdown(document.getElementById('u-body').value);
+}
+
+// ── PASTE IMAGES ──
 let pastedImgs = [];
-let loggedIn = false;
-let adminPw = '';
-
-// Load updates from API
-async function loadUpdates() {
-  const res = await fetch('/api/updates');
-  const updates = await res.json();
-  renderUpdates(updates);
-}
-
-function renderUpdates(updates) {
-  const grid = document.getElementById('updates-grid');
-  if (!updates.length) {
-    grid.innerHTML = '<div class="empty-state">The forest is quiet. No updates yet.</div>';
-    return;
-  }
-  grid.innerHTML = '';
-  [...updates].reverse().forEach((u, i) => {
-    const card = document.createElement('div');
-    card.className = 'update-card';
-    card.innerHTML = `
-      <div class="update-meta">
-        <span class="update-date">${u.date}</span>
-        <div class="update-dot"></div>
-        <span class="update-number">Update #${updates.length - i}</span>
-      </div>
-      <div class="update-title">${u.title}</div>
-      <div class="update-body">${u.body}</div>
-      ${u.images.length ? `<div class="update-images">${u.images.map(s=>`<img src="${s}" onclick="openLightbox('${s}')">`).join('')}</div>` : ''}
-    `;
-    grid.appendChild(card);
-  });
-}
-
-// Admin
-function openAdmin() {
-  if (loggedIn) { document.getElementById('admin-modal').classList.add('open'); showPanel(); return; }
-  const val = prompt('Enter admin password:');
-  if (!val) return;
-  fetch('/api/login', { method: 'POST', headers: { 'X-Admin-Password': val } })
-    .then(r => {
-      if (r.ok) { adminPw = val; loggedIn = true; document.getElementById('admin-modal').classList.add('open'); showPanel(); }
-      else { alert('Wrong password.'); }
-    });
-}
-
-function closeAdmin() { document.getElementById('admin-modal').classList.remove('open'); }
-
-function tryLogin() {}
-
-function showPanel() {
-  document.getElementById('pw-panel').style.display = 'none';
-  document.getElementById('main-panel').style.display = 'block';
-  loadPostList();
-}
-
-async function loadPostList() {
-  const res = await fetch('/api/updates');
-  const updates = await res.json();
-  const list = document.getElementById('post-list');
-  if (!updates.length) { list.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">No posts yet.</div>'; return; }
-  list.innerHTML = [...updates].reverse().map(u => `
-    <div class="post-item">
-      <span>${u.title}</span>
-      <button onclick="deleteUpdate('${u.id}')">Delete</button>
-    </div>
-  `).join('');
-}
-
-async function deleteUpdate(id) {
-  await fetch(`/api/updates/${id}`, { method: 'DELETE', headers: { 'X-Admin-Password': adminPw } });
-  loadUpdates();
-  loadPostList();
-}
-
-async function postUpdate() {
-  const title = document.getElementById('u-title').value.trim();
-  const body = document.getElementById('u-body').value.trim();
-  if (!title || !body) { alert('Title and description required.'); return; }
-  const btn = document.querySelector('.btn-post');
-  btn.textContent = 'Posting...';
-  btn.disabled = true;
-  try {
-    console.log('adminPw is:', adminPw);
-    const res = await fetch('/api/updates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPw },
-      body: JSON.stringify({ title, body, images: [...pastedImgs] })
-    });
-    console.log('Response status:', res.status);
-    if (res.ok) {
-      document.getElementById('u-title').value = '';
-      document.getElementById('u-body').value = '';
-      pastedImgs = [];
-      renderPasteZone();
-      loadUpdates();
-      loadPostList();
-      btn.textContent = '✓ Posted!';
-      setTimeout(() => { btn.textContent = 'Post Update'; btn.disabled = false; }, 2000);
-    } else {
-      alert('Failed to post. Check your connection.');
-      btn.textContent = 'Post Update';
-      btn.disabled = false;
-    }
-  } catch(e) {
-    alert('Error: ' + e.message);
-    btn.textContent = 'Post Update';
-    btn.disabled = false;
-  }
-}
-
-// Paste images
 const pasteZone = document.getElementById('paste-zone');
 pasteZone.addEventListener('paste', e => {
   for (let item of e.clipboardData.items) {
@@ -792,12 +749,125 @@ pasteZone.addEventListener('paste', e => {
 });
 function renderPasteZone() {
   document.getElementById('paste-hint').style.display = pastedImgs.length ? 'none' : 'block';
-  pasteZone.querySelectorAll('img').forEach(i=>i.remove());
-  pastedImgs.forEach(src => { const img=document.createElement('img'); img.src=src; pasteZone.appendChild(img); });
+  pasteZone.querySelectorAll('img').forEach(i => i.remove());
+  pastedImgs.forEach(src => { const img = document.createElement('img'); img.src = src; pasteZone.appendChild(img); });
 }
 
-// Lightbox
-function openLightbox(src) { document.getElementById('lb-img').src=src; document.getElementById('lightbox').classList.add('open'); }
+// ── API ──
+let loggedIn = false, adminPw = '';
+
+async function loadUpdates() {
+  const res = await fetch('/api/updates');
+  const updates = await res.json();
+  renderUpdates(updates);
+}
+
+function renderUpdates(updates) {
+  const grid = document.getElementById('updates-grid');
+  if (!updates.length) { grid.innerHTML = '<div class="empty-state">The forest is quiet. No updates yet.</div>'; return; }
+  grid.innerHTML = '';
+  const reversed = [...updates].reverse();
+  reversed.forEach((u, i) => {
+    // Day divider
+    if (i === 0 || reversed[i-1].date !== u.date) {
+      const div = document.createElement('div');
+      div.className = 'day-divider';
+      div.textContent = u.date;
+      grid.appendChild(div);
+    }
+    const card = document.createElement('div');
+    card.className = 'update-card';
+    const bodyHtml = parseMarkdown(u.body);
+    const imgPos = u.imgPos || 'bottom';
+    const imagesHtml = u.images && u.images.length
+      ? `<div class="update-images">${u.images.map(s => `<img src="${s}" onclick="openLightbox('${s}')">`).join('')}</div>` : '';
+
+    let bodySection = '';
+    if (imgPos === 'top') {
+      bodySection = imagesHtml + `<div class="update-body">${bodyHtml}</div>`;
+    } else if (imgPos === 'middle') {
+      const parts = bodyHtml.split('</p>');
+      const first = parts[0] + '</p>';
+      const rest = parts.slice(1).join('</p>');
+      bodySection = `<div class="update-body">${first}</div>${imagesHtml}<div class="update-body">${rest}</div>`;
+    } else {
+      bodySection = `<div class="update-body">${bodyHtml}</div>` + imagesHtml;
+    }
+
+    card.innerHTML = `
+      <div class="update-meta">
+        <span class="update-date">${u.date}</span>
+        <div class="update-dot"></div>
+        <span class="update-number">Update #${updates.length - i}</span>
+      </div>
+      <div class="update-title">${u.title}</div>
+      ${bodySection}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function openAdmin() {
+  if (loggedIn) { document.getElementById('admin-modal').classList.add('open'); showPanel(); return; }
+  const val = prompt('Enter admin password:');
+  if (!val) return;
+  fetch('/api/login', { method: 'POST', headers: { 'X-Admin-Password': val } })
+    .then(r => {
+      if (r.ok) { adminPw = val; loggedIn = true; document.getElementById('admin-modal').classList.add('open'); showPanel(); }
+      else { alert('Wrong password.'); }
+    });
+}
+function closeAdmin() { document.getElementById('admin-modal').classList.remove('open'); }
+function showPanel() { document.getElementById('main-panel').style.display = 'block'; loadPostList(); }
+
+async function loadPostList() {
+  const res = await fetch('/api/updates');
+  const updates = await res.json();
+  const list = document.getElementById('post-list');
+  if (!updates.length) { list.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">No posts yet.</div>'; return; }
+  list.innerHTML = [...updates].reverse().map(u => `
+    <div class="post-item">
+      <span>${u.title}</span>
+      <button onclick="deleteUpdate('${u.id}')">Delete</button>
+    </div>`).join('');
+}
+
+async function deleteUpdate(id) {
+  await fetch(`/api/updates/${id}`, { method: 'DELETE', headers: { 'X-Admin-Password': adminPw } });
+  loadUpdates(); loadPostList();
+}
+
+async function postUpdate() {
+  const title = document.getElementById('u-title').value.trim();
+  const body = document.getElementById('u-body').value.trim();
+  const imgPos = document.getElementById('u-imgpos').value;
+  if (!title || !body) { alert('Title and description required.'); return; }
+  const btn = document.getElementById('post-btn');
+  btn.textContent = 'Posting...'; btn.disabled = true;
+  try {
+    const res = await fetch('/api/updates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPw },
+      body: JSON.stringify({ title, body, images: [...pastedImgs], imgPos })
+    });
+    if (res.ok) {
+      document.getElementById('u-title').value = '';
+      document.getElementById('u-body').value = '';
+      pastedImgs = []; renderPasteZone();
+      loadUpdates(); loadPostList();
+      btn.textContent = '✓ Posted!';
+      setTimeout(() => { btn.textContent = 'Post Update'; btn.disabled = false; }, 2000);
+    } else {
+      alert('Failed to post.');
+      btn.textContent = 'Post Update'; btn.disabled = false;
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+    btn.textContent = 'Post Update'; btn.disabled = false;
+  }
+}
+
+function openLightbox(src) { document.getElementById('lb-img').src = src; document.getElementById('lightbox').classList.add('open'); }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
 
 loadUpdates();
