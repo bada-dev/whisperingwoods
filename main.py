@@ -27,6 +27,12 @@ def index():
 def get_updates():
     return jsonify(load_updates())
 
+@app.route("/api/login", methods=["POST"])
+def login():
+    if request.headers.get("X-Admin-Password") == ADMIN_PASSWORD:
+        return jsonify({"ok": True})
+    return jsonify({"error": "Unauthorized"}), 401
+
 @app.route("/api/updates", methods=["POST"])
 def post_update():
     if request.headers.get("X-Admin-Password") != ADMIN_PASSWORD:
