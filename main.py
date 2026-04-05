@@ -44,6 +44,7 @@ def post_update():
         "title": data.get("title", ""),
         "body": data.get("body", ""),
         "images": data.get("images", []),
+        "imgPos": data.get("imgPos", "bottom"),
         "date": datetime.now().strftime("%d %B %Y")
     })
     save_updates(updates)
