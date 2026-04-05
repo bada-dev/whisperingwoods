@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
-ADMIN_PASSWORD = "whisper123"  # Change this
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "fallback123")  # Change this
 DATA_FILE = "updates.json"
 
 def load_updates():
