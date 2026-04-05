@@ -1,3 +1,3 @@
 # whisperingwoods
 © 2026 All rights reserved.
-This project and its contents are not permitted to be copied, modified, distributed, or used without explicit permission from the author.
+_Alone in a forest that breathes. Something watches from the treeline — never close enough to see clearly, always close enough to feel. Survive the night. Learn the rules. Break none of them._
